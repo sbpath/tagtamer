@@ -5,39 +5,44 @@
         <meta charset="utf-8">
         <meta name="author" content="Bill Dry">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Your Found Tags</title>
-        <meta name="description" content="Format & display found tags">
+        <title>Your Updated Config Rules</title>
+        <meta name="description" content="Format & display updated AWS Config Rules">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     </head>
     <body>
+        <h3>Here are the updates to your selected AWS Config Rules</h3>
+        <br>
         <table style="width:800px" class="table table-bordered table-striped">
-            {% for instance, tags in inventory.items() %}
                 <tr>
                         <thead>
-                        <th scope="col">Resource ID</th>
-                        <th scope="col">Found Tags</th>
+                        <th scope="col">Config Rule Name</th>
+                        <th scope="col">Config Rule Parameters</th>
                         </thead>
-                        <td>{{ instance }}</td>
+                        <td>{{ updated_config_rule.pop('ConfigRuleName') }}</td>
                             <td><table style="width:600px" class="table table-sm table-bordered table-striped">
                                  <thead>
                                     <tr>
-                                    <th scope="col">Found Tag Key</th>
-                                    <th scope="col">Found Tag Value</th>
+                                    <th scope="col">Input Parameter Key</th>
+                                    <th scope="col">Input Parameter Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% for found_key, found_value in tags.items() %}
-                                    <tr>
-                                        <td>{{ found_key }}</td><td>{{ found_value }}</td>
-                                    </tr>
-                                {% endfor %}
+                                
+                                    {% for found_key, found_values in updated_config_rule.items() %}
+                                            
+                                            <tr>
+                                                <td>{{ found_key }}</td><td>{{ found_values }}</td>
+                                            </tr>
+                                            
+                                    {% endfor %}
+                                
                                 </tbody>
                                 </table>
                             </td>
                 </tr>
-                {% endfor %}
+                
         </table>
     
         <div class="container">

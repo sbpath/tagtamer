@@ -3,64 +3,58 @@
     <head>
         <meta charset="utf-8">
         <meta name="author" content="Bill Dry">
-        <meta name="description" content="Assign Tag Groups to Service Catalog TagOptions & Products">
+        <meta name="description" content="Tag your Roles">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Tag your resources</title>
+        <title>Tag your roles</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     </head>    
     <body>
             <div class="container">
                 <div class="row">
-                <div class="col-6">
+                <div class="col-12">
+                    <h3>Select your Role to tag</h3>
                     <table class="table table-borderless">
-                        <thead>
-                            <tr>
-                            <td style="text-align:center;font-size:200%;">Select Tag Groups to apply</td>
-                            </tr>
-                        </thead>
                         <tbody>
                             <tr>
-                                <td>Hold down the Control key to select multiple Tag Groups from the list, below.</td>
+                                <td>Please select an IAM Role from the list, below.</td>
                             </tr>
                         </tbody>
                     </table>
 
-        <form method="post" action="{{ url_for('set_service_catalog') }}">            
+        <form method="post" action="{{ url_for('set_roles_tags') }}">            
                     <div class="form-group">
-                        <select multiple class="custom-select" id="FormControlSelect1" name="tag_groups_to_assign" size="10">
-                        {% for tag_group_name, tag_group_key in tag_group_inventory.items() %}
-                            <option  value="{{ tag_group_name }}">{{ tag_group_name }}</option>
+                        <select class="custom-select" id="FormControlSelect1" name="roles_to_tag" size="10">
+                        {% for role_id in roles_inventory %}
+                            <option value="{{ role_id }}">{{ role_id }}</option>
                         {% endfor %}
                         </select>
                     </div>
-                    <p>Once you select your Tag Groups & AWS Service Catalog products, click the "Apply Tag Groups" button, below.</p>
                     <br>
-                    <br>
-                </div>
-                <div class="col-6">
-                    <table class="table table-borderless"> 
-                        <thead>
-                            <tr>
-                            <td style="text-align:center;font-size:200%;">Select your Service Catalog Products</td>
-                            </tr>
-                        </thead>   
+                    <h3>Now select your tags to apply</h3>
+                    <table class="table table-borderless">    
                         <tbody>
                             <tr>
-                                <td>Select the Product(s) you would like to apply Tag Groups to</td>
+                                <td>Choose a tag key:value pair from every Tag Group dropdown, below, that you want to apply as a tag to your selected role</td>
                             </tr>
                         </tbody>
                     </table>              
+                    {% for this_tag_group_info in tag_groups_all_info %}
                     <div class="form-group">
-                        <select multiple class="custom-select" id="FormControlSelect2" name="chosen_sc_product_template_ids" size="10">
-                        {% for sc_prod_id, sc_prod_name in sc_product_ids_names.items() %}
-                            <option  value="{{ sc_prod_id }}">{{ sc_prod_name }}</option>
+                        <select class="custom-select" id="FormControlSelect2" name="{{ this_tag_group_info[1] }}">
+                            <option  value="">Tag Group --> {{ this_tag_group_info[0] }}</option>
+                        {% for this_tag_group_value_option in this_tag_group_info[2] %}
+                            <option  value="{{ this_tag_group_value_option }}">{{ this_tag_group_info[1] }} : {{ this_tag_group_value_option }}</option>
                         {% endfor %}
                         </select>
                     </div>
+                    {% endfor %}
                 </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg">Apply Tag Groups</button>
+                <br>
+                    <p>Once you select an IAM role & associated tags, click the "Tag Selected Role" button, below.</p>
+                <br>
+                <button type="submit" class="btn btn-primary btn-lg">Tag Selected Role</button>
             </div>
         </form>
         <br>

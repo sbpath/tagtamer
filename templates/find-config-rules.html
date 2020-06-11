@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="author" content="Bill Dry">
-        <meta name="description" content="Assign Tag Groups to Service Catalog TagOptions & Products">
+        <meta name="description" content="Locate AWS Config rules">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Tag your resources</title>
+        <title>Update your AWS Config Rules</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     </head>    
     <body>
@@ -26,7 +26,7 @@
                         </tbody>
                     </table>
 
-        <form method="post" action="{{ url_for('set_service_catalog') }}">            
+        <form method="post" action="{{ url_for('set_config_rules') }}">            
                     <div class="form-group">
                         <select multiple class="custom-select" id="FormControlSelect1" name="tag_groups_to_assign" size="10">
                         {% for tag_group_name, tag_group_key in tag_group_inventory.items() %}
@@ -34,7 +34,7 @@
                         {% endfor %}
                         </select>
                     </div>
-                    <p>Once you select your Tag Groups & AWS Service Catalog products, click the "Apply Tag Groups" button, below.</p>
+                    <p>Once you select your Tag Groups & AWS Config Rules, click the "Apply Tag Groups" button, below.</p>
                     <br>
                     <br>
                 </div>
@@ -42,19 +42,19 @@
                     <table class="table table-borderless"> 
                         <thead>
                             <tr>
-                            <td style="text-align:center;font-size:200%;">Select your Service Catalog Products</td>
+                            <td style="text-align:center;font-size:200%;">Select your AWS Config Rules</td>
                             </tr>
                         </thead>   
                         <tbody>
                             <tr>
-                                <td>Select the Product(s) you would like to apply Tag Groups to</td>
+                                <td>Select the Rule(s) you would like to apply Tag Groups to</td>
                             </tr>
                         </tbody>
                     </table>              
                     <div class="form-group">
-                        <select multiple class="custom-select" id="FormControlSelect2" name="chosen_sc_product_template_ids" size="10">
-                        {% for sc_prod_id, sc_prod_name in sc_product_ids_names.items() %}
-                            <option  value="{{ sc_prod_id }}">{{ sc_prod_name }}</option>
+                        <select multiple class="custom-select" id="FormControlSelect2" name="chosen_config_rule_ids" size="10">
+                        {% for config_rule_id, config_rule_name in config_rules_ids_names.items() %}
+                            <option  value="{{ config_rule_id }}">{{ config_rule_name }}</option>
                         {% endfor %}
                         </select>
                     </div>
