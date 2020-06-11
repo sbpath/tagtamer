@@ -6,9 +6,15 @@
 # Import Collections module to manipulate dictionaries
 import collections
 from collections import defaultdict
+# Import getter/setter module for AWS Config
+import config
+from config import config
 # Import getter/setter module for AWS resources & tags
 import resources_tags
 from resources_tags import resources_tags
+# Import getter/setter module for AWS IAM
+import iam
+from iam import roles
 # Import getter module for TagOption Groups
 import get_tag_groups
 from get_tag_groups import get_tag_groups
@@ -263,5 +269,82 @@ def set_service_catalog():
             updated_product_temp_tagoptions[sc_prod_template_id].append(sc_response)
 
     return render_template('updated-service-catalog.html', sc_product_ids_names=sc_product_ids_names, updated_product_temp_tagoptions=updated_product_temp_tagoptions)
+
+# Retrieves AWS Config Rules & Tag Groups
+@app.route('/find-config-rules', methods=['GET'])
+def find_config_rules():
+
+    #Get the Tag Group names & associated tag keys
+    tag_group_inventory = dict()
+    tag_groups = get_tag_groups()
+    tag_group_inventory = tag_groups.get_tag_group_names()
+
+    #Get the AWS Config Rules
+    config_rules_ids_names = dict()
+    config_rules = config()
+    config_rules_ids_names = config_rules.get_config_rules_ids_names()
+    
+    return render_template('find-config-rules.html', tag_group_inventory=tag_group_inventory, config_rules_ids_names=config_rules_ids_names)
+
+# Updates AWS Config's required-tags rule using Tag Groups
+@app.route('/update-config-rules', methods=['POST'])
+def set_config_rules():
+    selected_tag_groups = list()
+    selected_tag_groups = request.form.getlist('tag_groups_to_assign')
+    selected_config_rules = list()
+    selected_config_rules = request.form.getlist('chosen_config_rule_ids')
+    config_rule_id = selected_config_rules[0]
+
+    tag_groups = get_tag_groups()
+    tag_group_key_values = dict()
+    tag_groups_keys_values = dict()
+    tag_count=1
+    for group in selected_tag_groups:
+        tag_group_key_values = tag_groups.get_tag_group_key_values(group)
+        key_name = "tag{}Key".format(tag_count)
+        value_name = "tag{}Value".format(tag_count)
+        tag_groups_keys_values[key_name] = tag_group_key_values['tag_group_key']
+        tag_group_values_string = ",".join(tag_group_key_values['tag_group_values'])
+        tag_groups_keys_values[value_name] = tag_group_values_string
+        tag_count+=1
+
+    config_rules = config()
+    config_rules.set_config_rules(tag_groups_keys_values, config_rule_id)
+    updated_config_rule = config_rules.get_config_rule(config_rule_id)
+
+    return render_template('updated-config-rules.html', updated_config_rule=updated_config_rule)  
+
+# Retrieves AWS IAM Roles & Tag Groups
+@app.route('/select-roles-tags', methods=['GET'])
+def select_roles_tags():
+    tag_group_inventory = get_tag_groups()
+    tag_groups_all_info = tag_group_inventory.get_all_tag_groups_key_values()
+
+    iam_roles = roles()
+    #Initially get AWS SSO Roles
+    path_prefix = "/aws-reserved/sso.amazonaws.com/"
+    roles_inventory = iam_roles.get_roles(path_prefix)
+
+    return render_template('tag-roles.html', roles_inventory=roles_inventory, tag_groups_all_info=tag_groups_all_info)
+
+# Assigns selected tags to roles for tagging newly created AWS resources
+@app.route('/set-roles-tags', methods=['POST'])
+def set_roles_tags():
+    role_name = request.form.get('roles_to_tag')
+    form_contents = request.form.to_dict()
+    form_contents.pop('roles_to_tag')
+
+    chosen_tags = list()
+    for key, value in form_contents.items():
+        if value:
+            tag_kv = {}
+            tag_kv["Key"] = key
+            tag_kv["Value"] = value
+            chosen_tags.append(tag_kv)
+
+    role_to_tag = roles()
+    role_to_tag.set_role_tags(role_name, chosen_tags)
+
+    return render_template('actions.html')
 
 app.run()          

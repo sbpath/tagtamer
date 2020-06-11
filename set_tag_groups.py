@@ -26,7 +26,6 @@ class set_tag_group:
                 "key_values": tag_group_value_options
             },
             ReturnValues='NONE',
-            #ConditionExpression=Attr('tag_group_name').not_exists()
         )
         return put_item_response
 
@@ -43,7 +42,6 @@ class set_tag_group:
                 ":kv": tag_group_value_options
             },
             ReturnValues='NONE',
-            #ConditionExpression=Attr('tag_group_name').exists()
         )
         return update_item_response
 
