@@ -8,15 +8,24 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 # Import JSON
 import json
+#import gzip
+import gzip
+#import base64
+import base64
 
 def lambda_handler(event, context):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('roles')
     
+    cw_data = event['awslogs']['data']
+    compressed_cw_payload = base64.b64decode(cw_data)
+    uncompressed_cw_payload = gzip.decompress(compressed_cw_payload)
+    payload = json.loads(uncompressed_cw_payload)
 
-    role_arn = event['userIdentity']['sessionContext']['sessionIssuer']['arn']
-    #print("Role ARN: ", role_arn)
-    resource_id = event['responseElements']['instancesSet']['items'][0]['instanceId'] 
+    cw_data_dict = json.loads(payload['logEvents'][0]['message'])
+    
+    role_arn = cw_data_dict['userIdentity']['sessionContext']['sessionIssuer']['arn']
+    resource_id = cw_data_dict['responseElements']['instancesSet']['items'][0]['instanceId']
 
     #Get a specified role and assigned tags 
     def get_role_tags(role_arn):
