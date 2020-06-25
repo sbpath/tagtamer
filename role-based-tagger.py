@@ -48,8 +48,7 @@ def lambda_handler(event, context):
 
     role_tags.append(creator)
     
-    #print("Role & Tags", role_tags)
-
+    
     def set_resources_tags(resource_id, role_tags):
 
         selected_resource_type = boto3.resource('ec2')
@@ -78,7 +77,7 @@ def lambda_handler(event, context):
 
     resource_tags = dict()
     resource_tags = set_resources_tags(resource_id, role_tags)
-    #print("Resource ID & Tags: ", resource_tags)
+    print("Resource ID & Tags: ", resource_tags)
     return {
         'statusCode': 200,
         'body': json.dumps(resource_tags)
