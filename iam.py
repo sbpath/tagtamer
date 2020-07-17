@@ -11,9 +11,9 @@ from boto3.dynamodb.conditions import Key, Attr
 class roles:
     
     #Class constructor
-    def __init__(self):
-        self.iam_resource = boto3.resource('iam')
-        self.dynamodb = boto3.resource('dynamodb')
+    def __init__(self, region):
+        self.iam_resource = boto3.resource('iam', region_name=region)
+        self.dynamodb = boto3.resource('dynamodb', region_name=region)
         self.table = self.dynamodb.Table('roles')
 
     #Return the list of IAM Roles for the specified path prefix

@@ -12,8 +12,8 @@ import json
 class config:
     
     #Class constructor
-    def __init__(self):
-        self.config_client = boto3.client('config')
+    def __init__(self, region):
+        self.config_client = boto3.client('config', region_name=region)
 
     #Get REQUIRED_TAGS Config Rule name & input parameters
     def get_config_rule(self, config_rule_id):

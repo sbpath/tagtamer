@@ -11,9 +11,9 @@ from boto3.dynamodb.conditions import Key, Attr
 class set_tag_group:
 
     #Class constructor
-    def __init__(self):
+    def __init__(self, region):
         self.tag_groups = {}
-        self.dynamodb = boto3.resource('dynamodb')
+        self.dynamodb = boto3.resource('dynamodb', region_name=region)
         self.table = self.dynamodb.Table('tag_groups')
     
     #Setter to instantiate a new Tag Group adding its tag key & range of tag values
