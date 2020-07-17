@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS Cloudformation template for TagTamer solution components - version-RC2",
+    "Description": "AWS Cloudformation template for TagTamer solution components - version - RC4",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
@@ -16,18 +16,6 @@
                 "AttributeDefinitions": [
                     {
                         "AttributeName": "tag_group_name",
-                        "AttributeType": "S"
-                    },
-                    {
-                        "AttributeName": "key_name",
-                        "AttributeType": "S"
-                    },
-                    {
-                        "AttributeName": "key_values",
-                        "AttributeType": "S"
-                    },
-                    {
-                        "AttributeName": "resource_type",
                         "AttributeType": "S"
                     }
                 ],
@@ -50,10 +38,6 @@
                 "AttributeDefinitions": [
                     {
                         "AttributeName": "role_arn",
-                        "AttributeType": "S"
-                    },
-                    {
-                        "AttributeName": "tags",
                         "AttributeType": "S"
                     }
                 ],
@@ -93,23 +77,7 @@
                         }
                     ]
                 },
-                "RoleName": "TagTamerRole",
-                "Path": "/",
-                "Policies": [
-                    {
-                        "PolicyName": "TagTamerInlinePolicy",
-                        "PolicyDocument": {
-                            "Version": "2012-10-17",
-                            "Statement": [
-                                {
-                                    "Effect": "Allow",
-                                    "Action": "*",
-                                    "Resource": "*"
-                                }
-                            ]
-                        }
-                    }
-                ]
+                "RoleName": "TagTamerRole"
             }
         },
         "TagTamerInstanceProfile": {
@@ -178,6 +146,18 @@
                     }
                 ]
             }
+        },
+        "EC2InstanceEIP": {
+            "Type": "AWS::EC2::EIP",
+            "Properties" : {
+                "Domain": "vpc",
+                "InstanceId": {
+                    "Ref": "EC2Instance"
+                }
+            },
+            "DependsOn": [
+                "EC2Instance"
+            ]
         },
         "TagTamerPolicy": {
             "Type": "AWS::IAM::Policy",
