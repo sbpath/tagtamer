@@ -22,6 +22,6 @@ https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagta
 
 Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS account.  You will need an EC2 Key Pair and a IAM Role with CloudFormation deployment permissions for DynamoDB, EC2 & IAM
 
-Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2_INSTANCE_PUBLIC_IP_ADDRESS>
+Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2_INSTANCE_PUBLIC_IP_ADDRESS> Where "EC2_INSTANCE_PUBLIC_IP_ADDRESS" is listed in the CloudFormation outputs.
 
 END OF PROCEDURE
