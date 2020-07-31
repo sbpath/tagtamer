@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # copyright 2020 Bill Dry
-# Tag Tamer UI
+# Tag Tamer Admin UI
 
 # Import Collections module to manipulate dictionaries
 import collections
@@ -35,7 +35,7 @@ app.config["DEBUG"] = True
 ##Output EC2 inventory as JSON for tobywan@
 @app.route('/ec2-tags', methods=['GET'])
 def ec2_tags():
-    inventory = resources_tags("ec2", "instances")
+    inventory = resources_tags("ec2", "instances", "us-east-1")
     sorted_tagged_inventory = inventory.get_resources_tags()
     return jsonify(sorted_tagged_inventory)
 
@@ -67,7 +67,7 @@ def found_tags():
     elif request.form.get('resource_type') == "s3":
         resource_type = 's3'
         unit = 'buckets'
-    inventory = resources_tags(resource_type, unit)
+    inventory = resources_tags(resource_type, unit, "us-east-1")
     sorted_tagged_inventory = inventory.get_resources_tags()
     return render_template('found-tags.html', inventory=sorted_tagged_inventory)
 
@@ -79,7 +79,7 @@ def type_to_tag_group():
 # Post response to get tag groups attributes UI
 @app.route('/get-tag-group-names', methods=['POST'])
 def get_tag_group_names():
-    all_tag_groups = get_tag_groups()
+    all_tag_groups = get_tag_groups("us-east-1")
     tag_group_names = all_tag_groups.get_tag_group_names()
     
     if request.form.get('resource_type') == "ebs":
@@ -103,12 +103,12 @@ def edit_tag_group():
     elif request.form.get('resource_type') == "s3":
         resource_type = 's3'
         unit = 'buckets'
-    inventory = resources_tags(resource_type, unit)
+    inventory = resources_tags(resource_type, unit, "us-east-1")
     sorted_tag_values_inventory = inventory.get_tag_values()
 
     selected_tag_group_name = request.form.get('tag_group_name')
     if selected_tag_group_name:    
-        tag_group = get_tag_groups()
+        tag_group = get_tag_groups("us-east-1")
         tag_group_key_values = tag_group.get_tag_group_key_values(selected_tag_group_name)
     else:
          selected_tag_group_name = request.form.get('new_tag_group_name')
@@ -139,13 +139,13 @@ def add_update_tag_group():
         new_tag_group_values = [value.strip(" ") for value in new_tag_group_values]
         tag_group_value_options.extend(new_tag_group_values)
 
-    tag_group = set_tag_group()
+    tag_group = set_tag_group("us-east-1")
     if tag_group_action == "create":
         new_tag_group = tag_group.create_tag_group(tag_group_name, tag_group_key_name, tag_group_value_options)
     else:
         updated_tag_group = tag_group.update_tag_group(tag_group_name, tag_group_key_name, tag_group_value_options)
 
-    tag_groups = get_tag_groups()
+    tag_groups = get_tag_groups("us-east-1")
     tag_group_key_values = tag_groups.get_tag_group_key_values(tag_group_name)
 
     if request.form.get('resource_type') == "ebs":
@@ -157,7 +157,7 @@ def add_update_tag_group():
     elif request.form.get('resource_type') == "s3":
         resource_type = 's3'
         unit = 'buckets'
-    inventory = resources_tags(resource_type, unit)
+    inventory = resources_tags(resource_type, unit, "us-east-1")
     sorted_tag_values_inventory = inventory.get_tag_values()
 
     return render_template('edit-tag-group.html', resource_type=resource_type, selected_tag_group_name=tag_group_name, selected_tag_group_attributes=tag_group_key_values, selected_resource_type_tag_values_inventory=sorted_tag_values_inventory)
@@ -180,10 +180,10 @@ def tag_resources():
     elif request.form.get('resource_type') == "s3":
         resource_type = 's3'
         unit = 'buckets'
-    chosen_resource_inventory = resources_tags(resource_type, unit)
+    chosen_resource_inventory = resources_tags(resource_type, unit, "us-east-1")
     chosen_resource_ids = chosen_resource_inventory.get_resources()
     
-    tag_group_inventory = get_tag_groups()
+    tag_group_inventory = get_tag_groups("us-east-1")
     tag_groups_all_info = tag_group_inventory.get_all_tag_groups_key_values()
 
     return render_template('tag-resources.html', resource_type=inbound_resource_type, resource_inventory=chosen_resource_ids, tag_groups_all_info=tag_groups_all_info) 
@@ -206,7 +206,7 @@ def apply_tags_to_resources():
     elif request.form.get('resource_type') == "s3":
         resource_type = 's3'
         unit = 'buckets'
-    chosen_resources_to_tag = resources_tags(resource_type, unit) 
+    chosen_resources_to_tag = resources_tags(resource_type, unit, "us-east-1") 
     form_contents.pop("resource_type")
 
     chosen_tags = []
@@ -231,13 +231,13 @@ def get_service_catalog():
 
     #Get the Tag Group names & associated tag keys
     tag_group_inventory = dict()
-    tag_groups = get_tag_groups()
+    tag_groups = get_tag_groups("us-east-1")
     tag_group_inventory = tag_groups.get_tag_group_names()
 
     #Get the Service Catalog product templates
     sc_product_ids_names = dict()
     #sc_product_names = list()
-    sc_products = service_catalog()
+    sc_products = service_catalog("us-east-1")
     sc_product_ids_names = sc_products.get_sc_product_templates()
     
 
@@ -256,7 +256,7 @@ def set_service_catalog():
     #Get the Service Catalog product templates
     sc_product_ids_names = dict()
     #sc_product_names = list()
-    sc_products = service_catalog()
+    sc_products = service_catalog("us-east-1")
     sc_product_ids_names = sc_products.get_sc_product_templates()
 
     #Assign every tag in selected Tag Groups to selected SC product templates
@@ -276,12 +276,12 @@ def find_config_rules():
 
     #Get the Tag Group names & associated tag keys
     tag_group_inventory = dict()
-    tag_groups = get_tag_groups()
+    tag_groups = get_tag_groups("us-east-1")
     tag_group_inventory = tag_groups.get_tag_group_names()
 
     #Get the AWS Config Rules
     config_rules_ids_names = dict()
-    config_rules = config()
+    config_rules = config("us-east-1")
     config_rules_ids_names = config_rules.get_config_rules_ids_names()
     
     return render_template('find-config-rules.html', tag_group_inventory=tag_group_inventory, config_rules_ids_names=config_rules_ids_names)
@@ -295,7 +295,7 @@ def set_config_rules():
     selected_config_rules = request.form.getlist('chosen_config_rule_ids')
     config_rule_id = selected_config_rules[0]
 
-    tag_groups = get_tag_groups()
+    tag_groups = get_tag_groups("us-east-1")
     tag_group_key_values = dict()
     tag_groups_keys_values = dict()
     tag_count=1
@@ -308,7 +308,7 @@ def set_config_rules():
         tag_groups_keys_values[value_name] = tag_group_values_string
         tag_count+=1
 
-    config_rules = config()
+    config_rules = config("us-east-1")
     config_rules.set_config_rules(tag_groups_keys_values, config_rule_id)
     updated_config_rule = config_rules.get_config_rule(config_rule_id)
 
@@ -317,10 +317,10 @@ def set_config_rules():
 # Retrieves AWS IAM Roles & Tag Groups
 @app.route('/select-roles-tags', methods=['GET'])
 def select_roles_tags():
-    tag_group_inventory = get_tag_groups()
+    tag_group_inventory = get_tag_groups("us-east-1")
     tag_groups_all_info = tag_group_inventory.get_all_tag_groups_key_values()
 
-    iam_roles = roles()
+    iam_roles = roles("us-east-1")
     #Initially get AWS SSO Roles
     path_prefix = "/aws-reserved/sso.amazonaws.com/"
     roles_inventory = iam_roles.get_roles(path_prefix)
@@ -342,7 +342,7 @@ def set_roles_tags():
             tag_kv["Value"] = value
             chosen_tags.append(tag_kv)
 
-    role_to_tag = roles()
+    role_to_tag = roles("us-east-1")
     role_to_tag.set_role_tags(role_name, chosen_tags)
 
     return render_template('actions.html')
