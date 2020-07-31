@@ -13,7 +13,8 @@ class config:
     
     #Class constructor
     def __init__(self, region):
-        self.config_client = boto3.client('config', region_name=region)
+        self.region = region
+        self.config_client = boto3.client('config', region_name=self.region)
 
     #Get REQUIRED_TAGS Config Rule name & input parameters
     def get_config_rule(self, config_rule_id):
@@ -21,7 +22,7 @@ class config:
         all_config_rules = dict()
         response = self.config_client.describe_config_rules()
         all_config_rules = response['ConfigRules'][0]
-
+        
         config_rule = dict()
         input_parameters_dict = dict()
         if all_config_rules['Source']['SourceIdentifier'] == 'REQUIRED_TAGS':
@@ -37,12 +38,12 @@ class config:
         response = dict()
         all_config_rules = dict()
         response = self.config_client.describe_config_rules()
-        all_config_rules = response['ConfigRules'][0]
+        all_config_rules = response['ConfigRules']
 
         config_rules_ids_names = dict()
-        
-        if all_config_rules['Source']['SourceIdentifier'] == 'REQUIRED_TAGS':
-            config_rules_ids_names[all_config_rules['ConfigRuleId']] = all_config_rules['ConfigRuleName']
+        for configRule in all_config_rules:
+            if configRule['Source']['SourceIdentifier'] == 'REQUIRED_TAGS':
+                config_rules_ids_names[configRule['ConfigRuleId']] = configRule['ConfigRuleName']
         
         return config_rules_ids_names
 

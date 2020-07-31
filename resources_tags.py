@@ -17,10 +17,11 @@ class resources_tags:
     def __init__(self, resource_type, unit, region):
         self.resource_type = resource_type
         self.unit = unit
+        self.region = region
 
     #Returns a sorted list of all resources for the resource type specified  
     def get_resources(self):
-        selected_resource_type = boto3.resource(self.resource_type, region_name=region)
+        selected_resource_type = boto3.resource(self.resource_type, region_name=self.region)
         sorted_resource_inventory = list()
 
         if self.unit == 'instances':
@@ -51,7 +52,7 @@ class resources_tags:
     #Returns a nested dictionary of every resource & its key:value tags for the chosen resource type
     def get_resources_tags(self):
 
-        selected_resource_type = boto3.resource(self.resource_type, region_name=region)
+        selected_resource_type = boto3.resource(self.resource_type, region_name=self.region)
         
         # Instantiate dictionaries to hold resources & their tags
         tagged_resource_inventory = {}
@@ -112,7 +113,7 @@ class resources_tags:
     #Getter method retrieves the value of every tag for a supplied resource type
     def get_tag_values(self):
 
-        selected_resource_type = boto3.resource(self.resource_type, region_name=region)
+        selected_resource_type = boto3.resource(self.resource_type, region_name=self.region)
         sorted_tag_values_inventory = list()
 
         if self.unit == 'instances':
@@ -158,7 +159,7 @@ class resources_tags:
     #Setter method to update tags on user-selected resources 
     def set_resources_tags(self, resources_to_tag, chosen_tags):
 
-        selected_resource_type = boto3.resource(self.resource_type, region_name=region)
+        selected_resource_type = boto3.resource(self.resource_type, region_name=self.region)
 
         resources_updated_tags = {}
 

@@ -21,7 +21,8 @@ class service_catalog:
     
     #Class constructor
     def __init__(self, region):
-        self.service_catalog_client = boto3.client('servicecatalog', region_name=region)
+        self.region = region
+        self.service_catalog_client = boto3.client('servicecatalog', region_name=self.region)
 
     #Method to create an SC TagOption & return the TagOption ID
     def create_sc_tag_option(self, tag_key, tag_value):

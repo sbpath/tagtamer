@@ -12,8 +12,9 @@ class roles:
     
     #Class constructor
     def __init__(self, region):
-        self.iam_resource = boto3.resource('iam', region_name=region)
-        self.dynamodb = boto3.resource('dynamodb', region_name=region)
+        self.region = region
+        self.iam_resource = boto3.resource('iam', region_name=self.region)
+        self.dynamodb = boto3.resource('dynamodb', region_name=self.region)
         self.table = self.dynamodb.Table('roles')
 
     #Return the list of IAM Roles for the specified path prefix
