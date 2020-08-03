@@ -15,8 +15,8 @@ class get_tag_groups:
     def __init__(self, region):
         self.tag_groups = {}
         self.region = region
-        #self.dynamodb = boto3.resource('dynamodb', region_name=self.region)
-        self.dynamodb = boto3.resource('dynamodb')
+        self.dynamodb = boto3.resource('dynamodb', region_name=self.region)
+        #self.dynamodb = boto3.resource('dynamodb')
         self.table = self.dynamodb.Table('tag_groups')
     
     #Returns a dictionary of actual_tag_group_name:actual_tag_group_key key:value pairs
