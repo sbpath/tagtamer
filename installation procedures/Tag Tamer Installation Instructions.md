@@ -14,7 +14,7 @@ b) Identify the EC2 Key Pair you will use to access the Tag Tamer Web App EC2 in
 
 c) Identify the IAM role that AWS CloudFormation will use to deploy DynamoDB, EC2 & IAM resources
 
-d) Request access from Bill Dry bdry@amazon.com to this AMI --> ami-03001fb36ed87128f <-- for your target AWS account
+d) Request access from Bill Dry bdry@amazon.com to this AMI --> ami-02a35aaef5d96cafb <-- for your target AWS account
 
 Step 1 - Download the AWS CloudFormation template at the following link.  It specifies the Tag Tamer solution infrastructure.
 

@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS Cloudformation template for TagTamer solution components - version - RC4",
+    "Description": "AWS Cloudformation template for TagTamer solution components - version - RC5",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
@@ -128,7 +128,7 @@
                         "Ref": "InstanceSecurityGroup"
                     }
                 ],
-                "ImageId": "ami-019b202a2877f4671",
+                "ImageId": "ami-02a35aaef5d96cafb",
                 "KeyName": {
                     "Ref": "KeyName"
                 },
@@ -167,6 +167,15 @@
                     "Version": "2012-10-17",
                     "Statement": [
                         {
+                            "Sid": "configtagging",
+                            "Action": [
+                                "config:DescribeConfigRules",
+                                "config:PutConfigRule"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": "*"
+                        },
+                        {
                             "Sid": "ec2tagging",
                             "Action": [
                                 "ec2:CreateTags",
@@ -174,6 +183,14 @@
                                 "ec2:DescribeInstances",
                                 "ec2:DescribeTags",
                                 "ec2:DescribeVolumes"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": "*"
+                        },
+                        {
+                            "Sid": "iamtagging",
+                            "Action": [
+                                "iam:ListRoles"
                             ],
                             "Effect": "Allow",
                             "Resource": "*"
