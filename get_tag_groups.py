@@ -25,8 +25,8 @@ class get_tag_groups:
         sorted_tag_group_names={}
         
         scan_response = self.table.scan(
-            IndexName='tag_group_name-index',
-            TableName='tag_groups',
+            #IndexName='tag_group_name-index',
+            #TableName='tag_groups',
             ProjectionExpression="key_name, tag_group_name"
             )        
         try:
