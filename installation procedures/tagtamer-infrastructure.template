@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS Cloudformation template for TagTamer solution components - version - RC5",
+    "Description": "AWS Cloudformation template for TagTamer solution components - version - RC6",
     "Parameters": {
         "KeyName": {
             "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
@@ -229,9 +229,15 @@
                             "Sid": "dynamodbRW",
                             "Effect": "Allow",
                             "Action": [
-                                "dynamodb:*"
+                                "dynamodb:PutItem",
+                		        "dynamodb:GetItem",
+                		        "dynamodb:Scan",
+                		        "dynamodb:UpdateItem"
                             ],
-                            "Resource": "*"
+                            "Resource": [
+                		        "arn:aws:dynamodb:*:*:table/roles",
+                		        "arn:aws:dynamodb:*:*:table/tag_groups"
+            		        ]
                         }
                     ]
                 },
