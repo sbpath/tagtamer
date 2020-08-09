@@ -4,9 +4,13 @@
 # Getter & setter for AWS Config Rules
 
 # Import AWS module for python
+import botocore
 import boto3
 # Import JSON
 import json
+# Import logging module
+import logging
+log = logging.getLogger(__name__)
 
 # Define AWS Config class to get/set items using Boto3
 class config:
@@ -50,16 +54,25 @@ class config:
     #Set REQUIRED_TAGS Config Rule
     def set_config_rules(self, tag_groups_keys_values, config_rule_id):
         
-        # convert selected Tag Groups into JSON for Boto3:
-        input_parameters_json = json.dumps(tag_groups_keys_values)
-        
-        self.config_client.put_config_rule(
-            ConfigRule={
-                'ConfigRuleId': config_rule_id,
-                'InputParameters': input_parameters_json,
-                'Source': {
-                    'Owner': 'AWS',
-                    'SourceIdentifier': 'REQUIRED_TAGS'
-                }    
-            }
-        )
+        if len(tag_groups_keys_values):
+            # convert selected Tag Groups into JSON for Boto3 input to
+            # this Config Rule's underlying Lambda :
+            input_parameters_json = json.dumps(tag_groups_keys_values)
+            
+            try:
+                self.config_client.put_config_rule(
+                    ConfigRule={
+                        'ConfigRuleId': config_rule_id,
+                        'InputParameters': input_parameters_json,
+                        'Source': {
+                            'Owner': 'AWS',
+                            'SourceIdentifier': 'REQUIRED_TAGS'
+                        }    
+                    }
+                )
+            except botocore.exceptions.ClientError as error:
+                errorString = "Boto3 API returned error: {}"
+                log.error(errorString.format(error))
+
+        else:
+            return log.warning("Please select at least one Tag Group")

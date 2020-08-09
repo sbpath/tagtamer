@@ -28,6 +28,16 @@ from service_catalog import service_catalog
 import flask
 from flask import Flask, request, render_template, jsonify
 
+# Import logging module
+import logging
+# logLevel options are DEBUG, INFO, WARNING, ERROR or CRITICAL
+logLevel = 'INFO'
+logging.basicConfig(filename='tag_tamer.log',format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p')
+# Set the base/root logging level for tag_tamer.py & all imported modules
+logging.getLogger().setLevel(logLevel)
+# Raise logging level for WSGI tool kit "werkzeug" that's German for "tool"
+logging.getLogger('werkzeug').setLevel('ERROR')
+
 # Instantiate flask API application
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -106,15 +116,17 @@ def edit_tag_group():
     inventory = resources_tags(resource_type, unit, "us-east-1")
     sorted_tag_values_inventory = inventory.get_tag_values()
 
-    selected_tag_group_name = request.form.get('tag_group_name')
-    if selected_tag_group_name:    
+    if request.form.get('tag_group_name'):    
+        selected_tag_group_name = request.form.get('tag_group_name')
         tag_group = get_tag_groups("us-east-1")
         tag_group_key_values = tag_group.get_tag_group_key_values(selected_tag_group_name)
+        return render_template('edit-tag-group.html', resource_type=resource_type, selected_tag_group_name=selected_tag_group_name, selected_tag_group_attributes=tag_group_key_values, selected_resource_type_tag_values_inventory=sorted_tag_values_inventory)
+    elif request.form.get('new_tag_group_name'):
+        selected_tag_group_name = request.form.get('new_tag_group_name')
+        tag_group_key_values = {}
+        return render_template('edit-tag-group.html', resource_type=resource_type, selected_tag_group_name=selected_tag_group_name, selected_tag_group_attributes=tag_group_key_values, selected_resource_type_tag_values_inventory=sorted_tag_values_inventory)
     else:
-         selected_tag_group_name = request.form.get('new_tag_group_name')
-         tag_group_key_values = {}
-
-    return render_template('edit-tag-group.html', resource_type=resource_type, selected_tag_group_name=selected_tag_group_name, selected_tag_group_attributes=tag_group_key_values, selected_resource_type_tag_values_inventory=sorted_tag_values_inventory)
+        return render_template('type-to-tag-group.html')
 
 # Post method to add or update a tag group
 @app.route('/add-update-tag-group', methods=['POST'])
@@ -300,13 +312,15 @@ def set_config_rules():
     tag_groups_keys_values = dict()
     tag_count=1
     for group in selected_tag_groups:
-        tag_group_key_values = tag_groups.get_tag_group_key_values(group)
-        key_name = "tag{}Key".format(tag_count)
-        value_name = "tag{}Value".format(tag_count)
-        tag_groups_keys_values[key_name] = tag_group_key_values['tag_group_key']
-        tag_group_values_string = ",".join(tag_group_key_values['tag_group_values'])
-        tag_groups_keys_values[value_name] = tag_group_values_string
-        tag_count+=1
+        # A Required_Tags Config Rule instance accepts up to 6 Tag Groups
+        if tag_count < 7:
+            tag_group_key_values = tag_groups.get_tag_group_key_values(group)
+            key_name = "tag{}Key".format(tag_count)
+            value_name = "tag{}Value".format(tag_count)
+            tag_groups_keys_values[key_name] = tag_group_key_values['tag_group_key']
+            tag_group_values_string = ",".join(tag_group_key_values['tag_group_values'])
+            tag_groups_keys_values[value_name] = tag_group_values_string
+            tag_count+=1
 
     config_rules = config("us-east-1")
     config_rules.set_config_rules(tag_groups_keys_values, config_rule_id)
