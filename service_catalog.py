@@ -6,15 +6,19 @@
 
 # Import AWS module for python
 import boto3
+import botocore
 # Import Collections module to manipulate dictionaries
 import collections
 from collections import defaultdict
-# Import Python's regex module to filter Boto3's API responses 
-#import re
 # Import getter for TagOption Groups
 import get_tag_groups
 from get_tag_groups import get_tag_groups
+# Import JSON parser
+import json
+# Import logging module
+import logging
 
+log = logging.getLogger(__name__)
 
 # Define Service Catalog (SC) class to get/set items using Boto3
 class service_catalog:
@@ -37,18 +41,25 @@ class service_catalog:
     #Method to update an SC TagOption & return the TagOption ID
     def update_sc_tag_option(self, tag_key, tag_value):
         sc_response = dict()
-        sc_response = self.service_catalog_client.update_tag_option(
-            Key=tag_key,
-            Value=tag_value
-        )
-        tag_option_id = sc_response['TagOptionDetail']['Id']
-        return tag_option_id
+        try:
+            sc_response = self.service_catalog_client.update_tag_option(
+                Key=tag_key,
+                Value=tag_value
+            )
+            tag_option_id = sc_response['TagOptionDetail']['Id']
+            return tag_option_id
+        except botocore.exceptions.ClientError as error:
+                log.error('Boto3 API returned error: \"%s\"', error)
     
     #Method to get all existing TagOptions from SC
     def get_sc_tag_options(self):
         sc_response = dict()
-        sc_response = self.service_catalog_client.list_tag_options()
-        return sc_response
+        try:
+            sc_response = self.service_catalog_client.list_tag_options()
+            return sc_response
+        except botocore.exceptions.ClientError as error:
+                log.error('Boto3 API returned error: \"%s\"', error)
+
 
     #Method to get all existing SC product template ID's & names
     def get_sc_product_templates(self):
@@ -73,16 +84,16 @@ class service_catalog:
         sc_tag_option_values = list()
 
         #Instantiate a service catalog class instance
-        sc_instance = service_catalog()
+        sc_instance = service_catalog(self.region)
 
         #Get the key & values list for the requested Tag Group
-        tag_group = get_tag_groups()
+        tag_group = get_tag_groups(self.region)
         tag_group_contents = tag_group.get_tag_group_key_values(tag_group_name)
         
         #Get the dictionary of current SC TagOptions
         current_sc_tag_options = sc_instance.get_sc_tag_options()
 
-        #Get the TagOption ID's of all SC TagOPtions that have the same key as the Tag Group parameter
+        #Get the TagOption ID's of all SC TagOptions that have the same key as the Tag Group parameter
         #If there's a key match, remember the corresponding value to see any Tag Group values are missing from SC
         for sc_tag_option in current_sc_tag_options['TagOptionDetails']:
             if sc_tag_option['Key'] == tag_group_contents['tag_group_key']:
@@ -93,7 +104,7 @@ class service_catalog:
         if sc_tag_option_values:
             for value in sc_tag_option_values:
                 if value not in tag_group_contents['tag_group_values']:
-                    tag_option_id = sc_instance.create_sc_tag_option(tag_group_contents['tag_group_key'], tag_group_value)
+                    tag_option_id = sc_instance.create_sc_tag_option(tag_group_contents['tag_group_key'], value)
                     sc_tag_option_ids.append(tag_option_id)
         else:
             for tag_group_value in tag_group_contents['tag_group_values']:
