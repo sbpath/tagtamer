@@ -28,7 +28,7 @@ https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagta
 
 Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS account.  You will need an EC2 Key Pair, VPC, Private Subnet and a IAM Role with CloudFormation deployment permissions for DynamoDB, EC2 & IAM
 
-Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2_INSTANCE_PUBLIC_IP_ADDRESS> Where "EC2_INSTANCE_PUBLIC_IP_ADDRESS" is listed in the CloudFormation outputs.
+Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2InstancePrivateIP> Where "EC2InstancePrivateIP" is listed in the CloudFormation outputs.
 
 # Solution2: ALB in Public Subnet with EC2 in Private subnet 
 
@@ -38,14 +38,14 @@ https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagta
 
 Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS account.  You will need an EC2 Key Pair, VPC, Private/Public Subnets, Certificate and a IAM Role with CloudFormation deployment permissions for DynamoDB, EC2 & IAM
 
-Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2_INSTANCE_PUBLIC_IP_ADDRESS> Where "EC2_INSTANCE_PUBLIC_IP_ADDRESS" is listed in the CloudFormation outputs.
+Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<PublicLoadBalancerDNSName> Where "PublicLoadBalancerDNSName" is listed in the CloudFormation outputs.
 
 # How to create self-signed certificate and import to AWS account
 ```shell
 openssl genrsa 2048 > my-aws-private.key
 openssl req -new -x509 -nodes -sha1 -days 3650 -extensions v3_ca -key my-aws-private.key > my-aws-public.crt
 openssl pkcs12 -inkey my-aws-private.key -in my-aws-public.crt -export -out my-aws-public.p12
-aws acm import-certificate --certificate fileb://my-aws-public.crt --private-key fileb://my-aws-private.ke
+aws acm import-certificate --certificate fileb://my-aws-public.crt --private-key fileb://my-aws-private.key
 ```
 
 
