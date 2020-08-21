@@ -20,7 +20,7 @@ e) Request access from Bill Dry bdry@amazon.com to this AMI --> ami-02a35aaef5d9
 
 Customer can either deploy Tagtamer solution in private subnet or public subnet. If being deployed in public, certificate is required for ALB setup.
 
-# Solution1: EC2 deployed in Private subnet 
+# Solution1: EC2 in Private subnet 
 
 Step 1 - Download the AWS CloudFormation template at the following link.  It specifies the Tag Tamer solution infrastructure.
 
@@ -30,7 +30,7 @@ Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS a
 
 Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2_INSTANCE_PUBLIC_IP_ADDRESS> Where "EC2_INSTANCE_PUBLIC_IP_ADDRESS" is listed in the CloudFormation outputs.
 
-# Solution2: ALB deployed Public subnet and EC2 in Private subnet 
+# Solution2: ALB in Public Subnet with EC2 in Private subnet 
 
 Step 1 - Download the AWS CloudFormation template at the following link.  It specifies the Tag Tamer solution infrastructure.
 
