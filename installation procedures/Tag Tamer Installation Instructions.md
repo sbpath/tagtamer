@@ -20,21 +20,21 @@ e) Request access from Bill Dry bdry@amazon.com to this AMI --> ami-02a35aaef5d9
 
 Customer can either deploy Tagtamer solution in private subnet or public subnet. If being deployed in public, certificate is required for ALB setup.
 
-# Solution1: EC2 in Private subnet 
+# Solution1: EC2 in Private subnet  - Preexisting VPC and Subnets
 
 Step 1 - Download the AWS CloudFormation template at the following link.  It specifies the Tag Tamer solution infrastructure.
 
-https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagtamer_v2_private.yaml 
+https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagtamer_v3_private.yaml 
 
 Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS account.  You will need an EC2 Key Pair, VPC, Private Subnet and a IAM Role with CloudFormation deployment permissions for DynamoDB, EC2 & IAM
 
 Step 3 - Verify the correct operation of the Tag Tamer Web App by browsing to https://<EC2InstancePrivateIP> Where "EC2InstancePrivateIP" is listed in the CloudFormation outputs.
 
-# Solution2: ALB in Public Subnet with EC2 in Private subnet 
+# Solution2: ALB in Public Subnet with EC2 in Private subnet  - New VPC and subnets created
 
 Step 1 - Download the AWS CloudFormation template at the following link.  It specifies the Tag Tamer solution infrastructure.
 
-https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagtamer_v2_public.yaml 
+https://github.com/billdry/tag-tamer/blob/master/installation%20procedures/tagtamer_v3_public.yaml 
 
 Step 2 - Deploy the CloudFormation Template downloaded in step 1 into your AWS account.  You will need an EC2 Key Pair, VPC, Private/Public Subnets, Certificate and a IAM Role with CloudFormation deployment permissions for DynamoDB, EC2 & IAM
 
