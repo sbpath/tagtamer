@@ -28,7 +28,9 @@ Parameters:
       Name of an existing Private Subnet to deploy ec2. Example: subnet-0a0b04653f7a82e25
     Type: 'AWS::EC2::Subnet::Id'
   CIDRIPRange:
-    Description : The CIDR IP address range that can be used to access Application, Example: To restrict to particular subnet input 10.10.1.0/24, To allow all subnets input 0.0.0.0/0
+    Description : >-
+      The CIDR IP address range that can be used to access Application. 
+      Example: To restrict to particular subnet input 10.10.1.0/24, To allow all subnets input 0.0.0.0/0
     Type: String
     MinLength: 9
     MaxLength: 18
