@@ -8,8 +8,9 @@ amazon-linux-extras install nginx1 -y
 # Install Python modules
 mkdir -p /home/ec2-user/tag-tamer/prod
 chown -R ec2-user:ec2-user /home/ec2-user/tag-tamer
-pip3 install boto3 botocore flask flask-WTF gunicorn Flask_jwt_Extended flask_login
-pip3 install /var/tmp/tagtamer/source/Flask-AWSCognito
+#pip3 install boto3 botocore flask flask-WTF gunicorn Flask_jwt_Extended flask_login
+#pip3 install /var/tmp/tagtamer/source/Flask-AWSCognito
+su - ec2-user -c "python3 -m venv /home/ec2-user/tag-tamer/prod;source /home/ec2-user/tag-tamer/prod/bin/activate; pip3 install boto3 botocore flask flask-WTF gunicorn Flask_jwt_Extended flask_login /var/tmp/tagtamer/source/Flask-AWSCognito; deactivate"
 
 # Copy code and config
 cd /var/tmp/tagtamer/source
@@ -26,6 +27,9 @@ touch /var/log/tag-tamer/tag-tamer.out.log
 # Permissions
 chown root:root /etc/nginx/conf.d/tag-tamer.conf /etc/nginx/proxy_params /etc/nginx/default.d/ssl-redirect.conf /etc/systemd/system/tagtamer.service
 chown -R ec2-user:ec2-user /home/ec2-user/tag-tamer /var/log/tag-tamer
+
+dos2unix /home/ec2-user/tag-tamer/*.py
+dos2unix /home/ec2-user/tag-tamer/templates/*.html
 
 # Fix IP in config
 sed -i  "s/192.168.10.80/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 

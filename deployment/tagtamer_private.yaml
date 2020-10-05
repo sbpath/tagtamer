@@ -182,6 +182,12 @@ Resources:
               - 's3:ReplicateTags'
             Effect: Allow
             Resource: '*'
+          - Sid: ssmparameteraccess
+            Action:
+              - 'ssm:GetParametersByPath'
+              - 'ssm:GetParameters'
+            Effect: Allow
+            Resource: '*'
           - Sid: serviceCatalog
             Action:
               - 'servicecatalog:CreateProduct'
