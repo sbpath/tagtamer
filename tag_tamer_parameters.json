@@ -1,8 +1,0 @@
-{
-    "parameters": {
-        "selected_regions": [
-                "us-east-1"
-        ],
-        "logging_level": "INFO"
-    }
-}
