@@ -9,10 +9,10 @@ amazon-linux-extras install nginx1 -y
 mkdir -p /home/ec2-user/tag-tamer/prod
 chown -R ec2-user:ec2-user /home/ec2-user/tag-tamer
 pip3 install boto3 botocore flask flask-WTF gunicorn Flask_jwt_Extended flask_login
-pip3 install /var/tmp/tagtamerv2/source/Flask-AWSCognito
+pip3 install /var/tmp/tagtamer/source/Flask-AWSCognito
 
 # Copy code and config
-cd /var/tmp/tagtamerv2/source
+cd /var/tmp/tagtamer/source
 cp config/tag-tamer.conf /etc/nginx/conf.d
 cp config/proxy_params /etc/nginx
 cp config/ssl-redirect.conf  /etc/nginx/default.d/
