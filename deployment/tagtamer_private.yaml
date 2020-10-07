@@ -193,7 +193,6 @@ Resources:
             Resource: '*'
           - Sid: serviceCatalog
             Action:
-              - 'servicecatalog:CreateProduct'
               - 'servicecatalog:CreateTagOption'
               - 'servicecatalog:DescribePortfolio'
               - 'servicecatalog:DescribeProduct'
