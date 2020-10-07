@@ -20,6 +20,7 @@ cp config/ssl-redirect.conf  /etc/nginx/default.d/
 cp config/tagtamer.service /etc/systemd/system
 cp -pr code/* to /home/ec2-user/tag-tamer/
 
+mkdir -p /home/ec2-user/tag-tamer/log
 mkdir -p /var/log/tag-tamer
 touch /var/log/tag-tamer/tag-tamer.err.log
 touch /var/log/tag-tamer/tag-tamer.out.log
