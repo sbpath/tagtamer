@@ -584,7 +584,7 @@ Resources:
     Properties:
       Name: /tag-tamer/cognito-domain-value
       Type: String
-      Value: !Sub https://${PublicLoadBalancer}.auth.${AWS::Region}.amazoncognito.com
+      Value: !Sub https://${EC2Instance}.auth.${AWS::Region}.amazoncognito.com
 
   TagTamerCognitoUserPoolId:
     Type: AWS::SSM::Parameter
