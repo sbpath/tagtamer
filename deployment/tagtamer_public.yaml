@@ -445,6 +445,42 @@ Resources:
     DependsOn:
       - TagTamerRole
 
+  TagTamerWebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: TagTamerWebACL
+      Scope: REGIONAL
+      Description: Tag Tamer WAF
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: TagTamerWebACL
+      Rules:
+        - Name: AWS-AWSManagedRulesCommonRuleSet
+          Priority: 0
+          OverrideAction:
+            Count: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWS-AWSManagedRulesCommonRuleSet
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+    DependsOn:
+      - PublicLoadBalancer
+
+  TagTamerWebACLAssociation:
+    Type: "AWS::WAFv2::WebACLAssociation"
+    Properties:
+      ResourceArn: !Ref PublicLoadBalancer
+      WebACLArn: { "Fn::GetAtt" : ["TagTamerWebACL", "Arn"] }
+    DependsOn:
+      - TagTamerWebACL
+
   TagTamerCognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
