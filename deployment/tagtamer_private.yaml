@@ -27,7 +27,7 @@ Parameters:
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
     Default: yourkeyname
   AMIID:
-    Description: Select Amazon Linux AMI to use for Tag Tamer solution. Recommened to use amzn2-ami-hvm-x86_64-gp2.
+    Description: Select Amazon Linux AMI to use for Tag Tamer solution. Recommended to use amzn2-ami-hvm-x86_64-gp2.
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
   VPCID:
