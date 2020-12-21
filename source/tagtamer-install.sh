@@ -37,9 +37,11 @@ dos2unix /home/ec2-user/tag-tamer/templates/*.html
 # Fix IP in config
 sed -i  "s/10.0.5.59/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
 
-# Get Public or Private Hostname to configure in certificate
-#FQDN=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
-FQDN=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
+# Get Public or Private Hostnames/IPs to configure in certificate
+FQDN1=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
+FQDN2=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
+IP1=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
+IP2=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 
 # Create root CA 
 mkdir -p /etc/pki/nginx/
@@ -51,11 +53,14 @@ openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 365 -out rootCA.crt 
 echo "subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = $FQDN" > v3.ext
+DNS.1 = $FQDN1
+DNS.2 = $FQDN2
+IP.1 = $IP1
+IP.2 = $IP2" > v3.ext
 
 # Create intermediate certificate
 openssl genrsa -out tagtamer.key 2048
-openssl req -new -sha256 -key tagtamer.key -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=$FQDN" -out tagtamer.csr
+openssl req -new -sha256 -key tagtamer.key -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=$FQDN1" -out tagtamer.csr
 openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out tagtamer.crt -days 365 -sha256 -extfile  v3.ext  
 
 # Create file for import into browser, this can be shared to import into trust store of client from where application being accessed.
