@@ -37,8 +37,9 @@ dos2unix /home/ec2-user/tag-tamer/templates/*.html
 # Fix IP in config
 sed -i  "s/10.0.5.59/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
 
-# Get Public Hostname
-FQDN=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
+# Get Public or Private Hostname to configure in certificate
+#FQDN=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
+FQDN=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
 
 # Create root CA 
 mkdir -p /etc/pki/nginx/
@@ -62,6 +63,7 @@ openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateser
 cat tagtamer.crt rootCA.crt > cert_to_import.crt
 
 # Example: Import to Mac OS trust store
+# Ask application Administrator to import  /etc/pki/nginx/cert_to_import.crt to browser where required
 # sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain cert_to_import.crt
 
 # Verify command - openssl x509 -text -noout -in tagtamer.crt 
