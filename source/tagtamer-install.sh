@@ -32,13 +32,41 @@ chown -R ec2-user:ec2-user /home/ec2-user/tag-tamer /var/log/tag-tamer
 dos2unix /home/ec2-user/tag-tamer/*.py
 dos2unix /home/ec2-user/tag-tamer/templates/*.html
 
-# Fix IP in config
-sed -i  "s/192.168.10.80/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
 
-# SSL certificate creation
-mkdir -p /etc/pki/nginx/private 
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/pki/nginx/private/nginx-selfsigned.key -out /etc/pki/nginx/nginx-selfsigned.crt -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=TAM/CN=tagtamer.amazon.com"
-openssl dhparam -out /etc/pki/nginx/dhparam.pem 2048
+# SSL certificate creation - START
+# Fix IP in config
+sed -i  "s/10.0.5.59/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
+
+# Get Public Hostname
+FQDN=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
+
+# Create root CA 
+mkdir -p /etc/pki/nginx/
+cd /etc/pki/nginx/
+openssl genrsa -out rootCA.key 2048
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 365 -out rootCA.crt -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=amazonaws.com"
+
+# Create intermediate certificate - Alt DNS name input file
+echo "subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = $FQDN" > v3.ext
+
+# Create intermediate certificate
+openssl genrsa -out tagtamer.key 2048
+openssl req -new -sha256 -key tagtamer.key -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=$FQDN" -out tagtamer.csr
+openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out tagtamer.crt -days 365 -sha256 -extfile  v3.ext  
+
+# Create file for import into browser, this can be shared to import into trust store of client from where application being accessed.
+# ca-bundle file below.
+cat tagtamer.crt rootCA.crt > cert_to_import.crt
+
+# Example: Import to Mac OS trust store
+# sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain cert_to_import.crt
+
+# Verify command - openssl x509 -text -noout -in tagtamer.crt 
+
+# SSL certificate creation - START
 
 # Enable and start services
 systemctl  enable tagtamer.service; systemctl  start tagtamer.service
