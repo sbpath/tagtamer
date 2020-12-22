@@ -47,7 +47,7 @@ IP2=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 mkdir -p /etc/pki/nginx/
 cd /etc/pki/nginx/
 openssl genrsa -out rootCA.key 2048
-openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 365 -out rootCA.crt -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=amazonaws.com"
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 398 -out rootCA.crt -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=amazonaws.com"
 
 # Create intermediate certificate - Alt DNS name input file
 echo "subjectAltName = @alt_names
@@ -61,19 +61,25 @@ IP.2 = $IP2" > v3.ext
 # Create intermediate certificate
 openssl genrsa -out tagtamer.key 2048
 openssl req -new -sha256 -key tagtamer.key -subj "/C=US/ST=NC/L=Raleigh/O=AWS/OU=AWS Support/CN=$FQDN1" -out tagtamer.csr
-openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out tagtamer.crt -days 365 -sha256 -extfile  v3.ext  
+openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out tagtamer.crt -days 398 -sha256 -extfile  v3.ext  
 
 # Create file for import into browser, this can be shared to import into trust store of client from where application being accessed.
 # ca-bundle file below.
-cat tagtamer.crt rootCA.crt > cert_to_import.crt
+cat tagtamer.crt rootCA.crt > tagtamer.ca-bundle
 
 # Example: Import to Mac OS trust store
-# Ask application Administrator to import  /etc/pki/nginx/cert_to_import.crt to browser where required
-# sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain cert_to_import.crt
+# Ask application Administrator to import  /etc/pki/nginx/tagtamer.ca-bundle to browser where required
+# sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain tagtamer.ca-bundle
+
+# Customer can also use their own trusted certificate instead self-signed certificate.
+# Update below 3 entries in /etc/nginx/conf.d/tag-tamer.conf with customer certificate path.
+#        ssl_certificate "/etc/pki/nginx/tagtamer.crt";
+#        ssl_certificate_key "/etc/pki/nginx/tagtamer.key";
+#	       ssl_client_certificate "/etc/pki/nginx/rootCA.crt";
 
 # Verify command - openssl x509 -text -noout -in tagtamer.crt 
 
-# SSL certificate creation - START
+# SSL certificate creation - END
 
 # Enable and start services
 systemctl enable tagtamer.service; systemctl  start tagtamer.service
