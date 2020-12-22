@@ -41,12 +41,10 @@ sed -i '/sendfile.*/i\    server_tokens       off;' /etc/nginx/nginx.conf
 sed -i  "s/10.0.5.59/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
 
 # Get Public or Private Hostnames/IPs to configure in certificate
-
 FQDN1=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
 FQDN2=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
 IP1=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 IP2=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-
 
 # Create root CA 
 mkdir -p /etc/pki/nginx/
