@@ -74,7 +74,7 @@ cat tagtamer.crt rootCA.crt > tagtamer.ca-bundle
 # It's highly recommended to import ca-bundle into customer desktop from where application being accessed .
 # Example: Import to Mac OS trust store
 # Ask application Administrator to import  /etc/pki/nginx/tagtamer.ca-bundle to browser where required.
-# sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain tagtamer.ca-bundle
+# sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain tagtamer.ca-bundle
 
 # Customer can also use their own trusted certificate instead self-signed certificate.
 # Update below 3 entries in /etc/nginx/conf.d/tag-tamer.conf with customer certificate path.
