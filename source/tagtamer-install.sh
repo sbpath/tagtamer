@@ -70,8 +70,10 @@ openssl x509 -req -in tagtamer.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateser
 # ca-bundle file below.
 cat tagtamer.crt rootCA.crt > tagtamer.ca-bundle
 
+# TagTamer application connectivity from browser will be shown as untrusted by default.
+# It's highly recommended to import ca-bundle into customer desktop from where application being accessed .
 # Example: Import to Mac OS trust store
-# Ask application Administrator to import  /etc/pki/nginx/tagtamer.ca-bundle to browser where required
+# Ask application Administrator to import  /etc/pki/nginx/tagtamer.ca-bundle to browser where required.
 # sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain tagtamer.ca-bundle
 
 # Customer can also use their own trusted certificate instead self-signed certificate.
@@ -79,6 +81,7 @@ cat tagtamer.crt rootCA.crt > tagtamer.ca-bundle
 #        ssl_certificate "/etc/pki/nginx/tagtamer.crt";
 #        ssl_certificate_key "/etc/pki/nginx/tagtamer.key";
 #	       ssl_client_certificate "/etc/pki/nginx/rootCA.crt";
+
 
 # Verify command - openssl x509 -text -noout -in tagtamer.crt 
 
