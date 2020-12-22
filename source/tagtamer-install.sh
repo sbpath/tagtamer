@@ -76,5 +76,5 @@ cat tagtamer.crt rootCA.crt > cert_to_import.crt
 # SSL certificate creation - START
 
 # Enable and start services
-systemctl  enable tagtamer.service; systemctl  start tagtamer.service
+systemctl enable tagtamer.service; systemctl  start tagtamer.service
 systemctl enable nginx; systemctl start nginx
