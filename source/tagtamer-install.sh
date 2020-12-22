@@ -41,10 +41,12 @@ sed -i '/sendfile.*/i\    server_tokens       off;' /etc/nginx/nginx.conf
 sed -i  "s/10.0.5.59/`hostname -i`/g" /etc/nginx/conf.d/tag-tamer.conf 
 
 # Get Public or Private Hostnames/IPs to configure in certificate
-FQDN1=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
-FQDN2=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
-IP1=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-IP2=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+
+FQDN1=`curl http://169.254.169.254/latest/meta-data/local-hostname` 
+FQDN2=`curl http://169.254.169.254/latest/meta-data/public-hostname` 
+IP1=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+IP2=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
+
 
 # Create root CA 
 mkdir -p /etc/pki/nginx/
@@ -57,9 +59,11 @@ echo "subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = $FQDN1
-DNS.2 = $FQDN2
-IP.1 = $IP1
-IP.2 = $IP2" > v3.ext
+IP.1 = $IP1" > v3.ext
+
+# Removed public IP/DNS from cert. Add below if needed to above section.
+# DNS.2 = $FQDN2
+# IP.2 = $IP2
 
 # Create intermediate certificate
 openssl genrsa -out tagtamer.key 2048
