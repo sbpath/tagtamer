@@ -77,6 +77,8 @@ cat tagtamer.crt rootCA.crt > tagtamer.ca-bundle
 # Example: Import to Mac OS trust store
 # Ask application Administrator to import  /etc/pki/nginx/tagtamer.ca-bundle to browser where required.
 # sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain tagtamer.ca-bundle
+# For Windows certificate import process refer to
+# https://docs.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate
 
 # Customer can also use their own trusted certificate instead self-signed certificate.
 # Update below 3 entries in /etc/nginx/conf.d/tag-tamer.conf with customer certificate path.
