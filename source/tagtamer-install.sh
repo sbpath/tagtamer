@@ -32,6 +32,9 @@ chown -R ec2-user:ec2-user /home/ec2-user/tag-tamer /var/log/tag-tamer
 dos2unix /home/ec2-user/tag-tamer/*.py
 dos2unix /home/ec2-user/tag-tamer/templates/*.html
 
+# set server_tokens to off in nginx.conf file
+sed -i '/server_tokens/d' /etc/nginx/nginx.conf
+sed -i '/sendfile.*/i\    server_tokens       off;' /etc/nginx/nginx.conf
 
 # SSL certificate creation - START
 # Fix IP in config
